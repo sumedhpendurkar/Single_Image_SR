@@ -11,8 +11,8 @@ from keras.layers import Conv2D, Dense
 
 def get_model_convolutional():
     model = keras.models.Sequential()
-    model.add(Conv2D(128, (1, 1), activation='relu', strides = (1,1), input_shape=(100, 100, 3)))
-    model.add(Conv2D(3, (1, 1), strides = (1,1), activation=None)) 
+    model.add(Conv2D(128, (3, 3), activation='relu', strides = (1,1), input_shape=(100, 100, 3)))
+    model.add(Conv2D(3, (3, 3), strides = (1,1), activation=None)) 
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy', optimizer=sgd)
     return model
@@ -44,10 +44,13 @@ def prepare_training_inputs():
         print(np.array(a).shape)
     return np.array(train_x)
 
+def prepare_training_outputs():
+    pass
+
 if __name__ == '__main__':
-    #model1 = get_model_convolutional()
+    model1 = get_model_convolutional()
     #model2 = get_model_ann()
     x_train = prepare_training_inputs()
-    #y_train = prepare_training_outputs()
-    #model1.fit(x_train, y_train, epochs=20, batch_size=128)
+    y_train = prepare_training_outputs()
+    model1.fit(x_train, y_train, epochs=20, batch_size=128)
 
