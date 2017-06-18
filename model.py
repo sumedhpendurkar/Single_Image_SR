@@ -25,59 +25,39 @@ def get_model_ann():
     model.compile(loss='categorical_crossentropy', optimizer=sgd)
     return model
 
-def prepare_training_inputs():
-    path = './dataset/x/'
-    x = os.listdir(path)
-    max_img_size = 1028
-    train_x = []
-    tmp = [[0,0,0] for x in range(max_img_size)]
-    count = 0
-    for i in x:
-        if count >= 20:
-            break
-        print(i)
-        img = cv2.imread(path + i)
-        #np.pad(img,((0, max_img_size - img.shape[0]), (0,max_img_size - img.shape[1])), mode = 'constant', constant_values = 0)
-        a = img.tolist()
-        for x in range(len(a)):
-            while len(a[x]) !=max_img_size:
-                a[x].append([0,0,0])
-        while len(a) !=max_img_size:
-            a.append(tmp)
-        train_x.append(a)
-        print(np.array(a).shape)
-        count+=1
-    return np.array(train_x)
+def training_x():
+    path_x = './dataset/x/'
+    path_y = './dataset/y/'
+    files = os.listdir(path_x)
+    max_img_size_x = 1028
+    max_img_size_y = 1024
+    train_x = np.zeros((108,max_img_size_x, max_img_size_x, 3), dtype = np.uint8)
+    train_y = np.zeros((108,max_img_size_y, max_img_size_y, 3), dtype = np.uint8)
 
-def prepare_training_outputs():
-    path = './dataset/y/'
-    x = os.listdir(path)
-    max_img_size = 1024
-    train_y = []
-    tmp = [[0,0,0] for x in range(max_img_size)]
-    count = 0
-    for i in x:
-        if count >= 20:
-            break
-        print(i)
-        img = cv2.imread(path + i)
-        #np.pad(img,((0, max_img_size - img.shape[0]), (0,max_img_size - img.shape[1])), mode = 'constant', constant_values = 0)
-        a = img.tolist()
-        for x in range(len(a)):
-            while len(a[x]) !=max_img_size:
-                a[x].append([0,0,0])
-        while len(a) !=max_img_size:
-            a.append(tmp)
-        train_y.append(a)
-        print(np.array(a).shape)
-        count+=1
-    return np.array(train_y)
-
+    for i in range(0, len(files)):
+        img =  cv2.imread(path_x+files[i])
+        print(files[i])
+        for j in range(len(img)):
+            for k in range(len(img[j])):
+                train_x[i][j][k][:] = img[j][k]
+        file_y = files[i].replace('bicubic', 'HR')
+        img = cv2.imread(path_y+file_y)
+        print(file_y)
+        for j in range(len(img)):
+            for k in range(len(img[j])):
+                train_y[i][j][k][:] = img[j][k]
+    print(train_x.shape)
+    print(train_y.shape)
+    return train_x, train_y
 
 if __name__ == '__main__':
     model1 = get_model_convolutional()
     #model2 = get_model_ann()
-    x_train = prepare_training_inputs()
-    y_train = prepare_training_outputs()
-    model1.fit(x_train, y_train, epochs=20, batch_size=128)
+    model1.summary()
+    x_train, y_train = training_x()
+    print("x_train.size = ", x_train.size)
+    print("y_train.size = ", y_train.size)
+    print("x_train.shape = ", x_train.shape)
+    print("y_train.shape = ", y_train.shape)
+    model1.fit(x_train, y_train, verbose = 2,epochs=20, batch_size=4)
 
