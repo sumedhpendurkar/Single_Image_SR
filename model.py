@@ -33,8 +33,8 @@ def training_set():
     files = os.listdir(path_x)
     max_img_size_x = 1024
     max_img_size_y = 1024
-    train_x = np.zeros((108,max_img_size_x, max_img_size_x, 3), dtype = np.uint8)
-    train_y = np.zeros((108,max_img_size_y, max_img_size_y, 3), dtype = np.uint8)
+    train_x = np.zeros((108,max_img_size_x, max_img_size_x, 3), dtype = np.float32)
+    train_y = np.zeros((108,max_img_size_y, max_img_size_y, 3), dtype = np.float32)
 
     for i in range(0, len(files)):
         img =  cv2.imread(path_x+files[i])
