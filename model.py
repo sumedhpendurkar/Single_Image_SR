@@ -20,13 +20,6 @@ def get_model_convolutional():
     model.compile(loss='mse', optimizer=sgd)
     return model
 
-def get_model_ann():
-    model = keras.models.Sequential()
-    model.add(Dense(128, activation = 'relu', input_dim = 100 * 100 * 3))
-    model.add(Dense(100*3*3, activation = None))
-    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss='categorical_crossentropy', optimizer=sgd)
-    return model
 def training_set():
     path_x = './dataset/x/'
     path_y = './dataset/y/'
@@ -42,6 +35,7 @@ def training_set():
         for j in range(len(img)):
             for k in range(len(img[j])):
                 train_x[i][j][k][:] = img[j][k]
+        print(train_x[i])
         file_y = files[i].replace('bicubic', 'HR')
         img = cv2.imread(path_y+file_y)
         print(file_y)
@@ -49,6 +43,7 @@ def training_set():
             for k in range(len(img[j])):
                 train_y[i][j][k][:] = img[j][k]
         print(train_x[i].shape, train_y[i].shape)
+        print(train_y[i])
     print(train_x.shape)
     print(train_y.shape)
     return train_x, train_y
@@ -66,4 +61,4 @@ if __name__ == '__main__':
     model1.save('sr_deconv_net.h5')
     y_predicted = model1.predict(x_train[0:5], batch_size = 5)
     for i in range(5):
-        cv2.imwrite('predicted_' + str(i), np.uint8(y_predicted[i]))
+        cv2.imwrite('predicted_' + str(i)+'.png', np.uint8(y_predicted[i]))
