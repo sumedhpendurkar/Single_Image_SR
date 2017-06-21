@@ -66,4 +66,4 @@ if __name__ == '__main__':
     model1.save('sr_deconv_net.h5')
     y_predicted = model1.predict(x_train[0:5], batch_size = 5)
     for i in range(5):
-        cv2.imwrite('predicted_' + str(i), np.uint8(y_predicted[0]))
+        cv2.imwrite('predicted_' + str(i), np.uint8(y_predicted[i]))
