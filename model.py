@@ -12,7 +12,7 @@ import sys
 
 def get_model_convolutional():
     model = keras.models.Sequential()
-    model.add(Conv2D(32, (3, 3), activation='relu', strides = (1,1), input_shape=(1028, 1028, 3)))
+    model.add(Conv2D(32, (3, 3), activation='relu', strides = (1,1), input_shape=(1024, 1024, 3)))
     model.add(Conv2D(64, (3, 3), strides = (1,1), activation='relu'))
     model.add(Deconv2D(32, (3, 3), strides = (1,1), activation = None))
     model.add(Deconv2D(3, (3,3), strides = (1,1), activation = None))
