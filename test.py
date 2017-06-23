@@ -7,7 +7,7 @@ from keras.optimizers import SGD
 
 import cv2
 import os
-from keras.layers import Conv2D, Dense, Deconv2D
+from keras.layers import Conv2D, Dense, Deconv2D, MaxPooling2D, UpSampling2D
 import sys
 def normalized(rgb):
 
@@ -24,11 +24,13 @@ def normalized(rgb):
     return rgb
 def get_model_convolutional():
     model = keras.models.Sequential()
-    model.add(Conv2D(32, (3, 3), activation='relu', strides = (1,1), input_shape=(228, 228, 3)))
-    model.add(Conv2D(16, (3, 3), strides = (1,1), activation='relu'))
-    model.add(Deconv2D(32, (3, 3), strides = (1,1), activation = 'relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu', strides = (1,1), input_shape=(228, 228, 3)))
+    model.add(MaxPooling2D((2,2), padding='same'))
+    model.add(Conv2D(32, (3, 3), strides = (1,1), activation='relu'))
+    model.add(Deconv2D(64, (3, 3), strides = (1,1), activation = None))
+    model.add(UpSampling2D((2,2)))
     model.add(Deconv2D(3, (3,3), strides = (1,1), activation = None))
-    adam = keras.optimizers.Adam(lr=0.004, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
+    adam = keras.optimizers.Adam(lr=0.005, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=3e-06)
     model.compile(loss='mse', optimizer=adam)
     return model
 
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     print("x_train.shape = ", x_train.shape)
     print("y_train.shape = ", y_train.shape)
     model1.fit(x_train, y_train, verbose = 2,epochs=100, batch_size=16)
-    model1.save('sr_deconv_net.h5')
+    model1.save('sr_deconv_net.h5', overwrite = True)
     y_predicted = model1.predict(x_train[0:5], batch_size = 5)
     for i in range(5):
         cv2.imwrite('predicted_' + str(i)+'.png', np.uint8(y_predicted[i]))
