@@ -9,27 +9,15 @@ import cv2
 import os
 from keras.layers import Conv2D, Dense, Deconv2D, MaxPooling2D, UpSampling2D
 import sys
-def normalized(rgb):
 
-    b=rgb[:,:,0]
-    g=rgb[:,:,1]
-    r=rgb[:,:,2]
-
-    summ=b+g+r
-
-    rgb[:,:,0]=b*255.0/summ
-    rgb[:,:,1]=g*255.0/summ
-    rgb[:,:,2]=r*255.0/summ
-
-    return rgb
 def get_model_convolutional():
     model = keras.models.Sequential()
-    model.add(Conv2D(64, (3, 3), activation='relu', strides = (1,1), input_shape=(228, 228, 3)))
-    model.add(MaxPooling2D((2,2), padding='same'))
-    model.add(Conv2D(32, (3, 3), strides = (1,1), activation='relu'))
-    model.add(Deconv2D(64, (3, 3), strides = (1,1), activation = None))
-    model.add(UpSampling2D((2,2)))
-    model.add(Deconv2D(3, (3,3), strides = (1,1), activation = None))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding = 'same', strides = (1,1), input_shape=(228, 228, 3)))
+    model.add(Conv2D(64, (3, 3), strides = (1,1), padding = 'same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), strides = (1,1), padding = 'same', activation='relu'))
+    model.add(Deconv2D(64, (3, 3), strides = (1,1), padding = 'same', activation = 'relu'))
+    model.add(Deconv2D(32, (3, 3), strides = (1,1), padding = 'same', activation = 'relu'))
+    model.add(Deconv2D(3, (3,3), strides = (1,1), padding = 'same', activation = 'relu'))
     adam = keras.optimizers.Adam(lr=0.005, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=3e-06)
     model.compile(loss='mse', optimizer=adam)
     return model
@@ -63,7 +51,6 @@ def training_set():
 
 if __name__ == '__main__':
     model1 = get_model_convolutional()
-    #model2 = get_model_ann()
     model1.summary()
     x_train, y_train = training_set()
     print("x_train.size = ", x_train.size)
